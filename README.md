@@ -38,6 +38,52 @@ CONTAINER ID        IMAGE               COMMAND              CREATED            
 95e4570d7f6e        busybox             "echo hello world"   4 seconds ago       Exited (0) 3 seconds ago                       happy_williams
 ```
 
+## Installation
+
+Download the correct build for your OS from our
+[github releases][github releases] and install the binary into your PATH
+(/usr/local/bin tends to work well)
+
+For Homebrew users on MacOS
+```console
+$ brew install BytemarkHosting/tools/docker-machine-driver-bytemark
+```
+
+## Usage
+
+The driver provides the following flags to docker-machine create:
+```console
+$ docker-machine create -d bytemark
+   --bytemark-cores "1"         Number of CPU cores [$BYTEMARK_CORES]
+   --bytemark-disk-grade "sata" Disk storage grade (sata / archive)
+   --bytemark-disk-size "25"    Disk size in GiB
+   --bytemark-memory "1024"     Memory in MiB [$BYTEMARK_MEMORY]
+   --bytemark-zone "york"       Zone [$BYTEMARK_ZONE]
+```
+Right now `docker-machine-driver-bytemark` requires that the
+`--engine-storage-driver` flag is set to `overlay2` as per the example at the
+beginning of this README. This is due to docker-machine's `debian` provisioner
+defaulting `--engine-storage-driver` to `aufs` - which is not supported on
+Debians with a 4.0+ Linux kernel (Debian Stretch and beyond)
+
+The machine name is used to provide the group and account which the machine will
+belong to. Defaults are chosen in the same way as bytemark-client; a request is
+sent to our billing system to determine your default account (which is the first
+account associated with your login user) and the group named 'default' is the
+default group within that account. Here are some examples:
+
+```console
+# creates a server called 'docker' in the 'default' group in your default account
+$ docker-machine create -d bytemark --engine-storage-driver overlay2 docker
+
+# creates a server called 'master' in the 'swarm' group in your default account
+$ docker-machine create -d bytemark --engine-storage-driver overlay2 master.swarm
+
+# creates a server called 'master' in the 'swarm' group in the '[honeyiscool][honeyiscool]' account
+$ docker-machine create -d bytemark --engine-storage-driver overlay2 master.swarm.honeyiscool
+```
+
+
 ## Authentication
 
 Authentication is done using a token obtained from Bytemark's auth server as
@@ -57,13 +103,6 @@ $ docker-machine ssh manager "docker swarm init"
 $ docker-machine ssh worker "docker swarm join --token [worker-token]"
 ```
 
-## `--engine-storage-driver overlay2`?
-
-Yeah, sorry... docker-machine's default driver for debian right now is aufs,
-which makes sense on debian versions prior to stretch. Bytemark's stretch image
-does not have aufs installed, so --engine-storage-driver must be set when
-creating your docker-machine to `overlay2` - this is the replacement for aufs
-and is generally recommended.
-
 [authapi](https://docs.bytemark.co.uk/article/about-the-cloud-server-api/#authentication)
 [bytemark-client](https://github.com/BytemarkHosting/bytemark-client)
+[honeyiscool](https://www.youtube.com/watch?v=NxNCWogS-SI)
