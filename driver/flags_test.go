@@ -8,7 +8,7 @@ import (
 )
 
 func TestSetConfigFromFlags(t *testing.T) {
-	driver := NewDriver("", "")
+	driver := bytemark.NewDriver("", "")
 
 	checkFlags := &drivers.CheckDriverOptions{
 		FlagsValues: map[string]interface{}{
