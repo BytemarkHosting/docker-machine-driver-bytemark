@@ -15,10 +15,9 @@ test:
 
 .build: &build
   stage: build
-  before_script:
+  script:
     - apt update
     - apt install -y zip
-  script:
     - go build github.com/BytemarkHosting/docker-machine-driver-bytemark
     - zip docker-machine-driver-bytemark-$GOOS-$GOARCH.zip
   artifacts:
