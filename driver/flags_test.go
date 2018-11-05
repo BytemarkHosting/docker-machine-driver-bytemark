@@ -3,6 +3,7 @@ package bytemark_test
 import (
 	"testing"
 
+	bytemark "github.com/BytemarkHosting/docker-machine-driver-bytemark/driver"
 	"github.com/docker/machine/libmachine/drivers"
 	"github.com/stretchr/testify/assert"
 )
