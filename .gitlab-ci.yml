@@ -2,7 +2,7 @@ stages:
   - test
   - build
 
-image: $CI_REGISTRY/docker-images/layers:stretch-go
+image: go:1.11-stretch
 
 before_script:
   - go get -t ./...
@@ -13,6 +13,9 @@ test:
 
 .build: &build
   stage: build
+  before_script:
+    - apt update
+    - apt install zip
   script:
     - go build -o docker-machine-driver-bytemark
     - zip docker-machine-driver-bytemark-$GOOS-$GOARCH.zip
