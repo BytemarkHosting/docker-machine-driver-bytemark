@@ -2,110 +2,103 @@ package bytemark
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/BytemarkHosting/bytemark-client/lib"
 	"github.com/BytemarkHosting/bytemark-client/lib/brain"
-	"github.com/docker/machine/libmachine/drivers"
-	"github.com/docker/machine/libmachine/state"
+	"github.com/docker/machine/libmachine/log"
 )
-
-// Driver is a struct compatible with the docker.hosts.drivers.Driver interface.
-type Driver struct {
-	*drivers.BaseDriver
-
-	Spec      brain.VirtualMachineSpec
-	GroupName lib.GroupName
-	Server    *brain.VirtualMachine
-
-	client lib.Client
-}
 
 const (
-	defaultZone     = "york"
-	defaultMemory   = 1024
-	defaultCores    = 1
-	defaultDiscSpec = "25:sata"
-	defaultName     = "docker"
-	defaultSSHKey   = ""
+	defaultZone      = "york"
+	defaultMemory    = 1024
+	defaultCores     = 1
+	defaultDiskGrade = "sata"
+	defaultDiskSize  = 25
+	defaultName      = "docker-machine"
+	defaultSSHKey    = ""
 
-	defaultUser      = ""
-	defaultPass      = ""
-	default2FAToken  = ""
-	defaultYubikey   = ""
-	defaultAuthToken = ""
+	defaultUser     = ""
+	defaultPass     = ""
+	default2FAToken = ""
+	defaultYubikey  = ""
 )
 
-// NewDriver creates a Driver with the specified storePath.
-func NewDriver(machineName string, storePath string) *Driver {
-	defaultDiscs := brain.Discs{
-		brain.Disc{
-			Label:        "disk-1",
-			StorageGrade: "sata",
-			Size:         25600,
-		},
+func (d *Driver) vmName() lib.VirtualMachineName {
+	if d.vmNameCached != nil {
+		return *d.vmNameCached
+	}
+	vmn, _ := lib.ParseVirtualMachineName(d.MachineName)
+	if vmn.VirtualMachine == "" {
+		vmn.VirtualMachine = defaultName
+	}
+	d.vmNameCached = &vmn
+	return vmn
+}
+
+func (d *Driver) getToken() (string, error) {
+	if d.token != "" {
+		return d.token, nil
+	}
+	d.token = os.Getenv("BYTEMARK_AUTH_TOKEN")
+	if d.token != "" {
+		return d.token, nil
 	}
 
-	return &Driver{
-		Spec: brain.VirtualMachineSpec{
-			VirtualMachine: brain.VirtualMachine{
-				Cores: defaultCores,
-				Discs: defaultDiscs,
+	log.Debugf("Trying to read bytemark auth token from docker-machine store")
 
-				Memory:   defaultMemory,
-				ZoneName: defaultZone,
-				Name:     defaultName,
-			},
-			Reimage: &brain.ImageInstall{
-				Distribution: "docker",
-				RootPassword: "Shohshu9mi9aephahnaigi5l",
-			},
-		},
+	tokenBytes, err := ioutil.ReadFile(d.ResolveStorePath("token"))
+
+	if err == nil {
+		d.token = string(tokenBytes)
+		return d.token, nil
 	}
+	path := filepath.Join(os.Getenv("HOME"), ".bytemark", "token")
+	log.Debugf("Trying to read bytemark auth token from %s", path)
+	tokenBytes, err = ioutil.ReadFile(path)
+
+	if err == nil {
+		d.token = string(tokenBytes)
+		return d.token, nil
+	}
+
+	err = fmt.Errorf("Couldn't find a bytemark auth token. Please set BYTEMARK_AUTH_TOKEN")
+	return "", err
 }
 
-// DriverName returns the name of the driver
-func (d *Driver) DriverName() string {
-	return "bytemark"
+func (d *Driver) getClient() (lib.Client, error) {
+	if d.client != nil {
+		return d.client, nil
+	}
+	token, err := d.getToken()
+	if err != nil {
+		return nil, fmt.Errorf("Could not find a token: %s. Please set BYTEMARK_AUTH_TOKEN environment variable", err)
+	}
+	client, err := lib.New()
+	if err != nil {
+		return nil, fmt.Errorf("Could not create client: %s", err)
+	}
+
+	err = client.AuthWithToken(token)
+	if err != nil {
+		return nil, fmt.Errorf("Could not authenticate: %s", err)
+	}
+	d.client = client
+	return client, nil
 }
 
-// GetURL returns the URL of the remote docker daemon.
-func (d *Driver) GetURL() (string, error) {
-	//return fmt.Sprintf("tcp://%s", net.JoinHostPort(ip, "2376")), nil
-	return "", fmt.Errorf("not implemented yet")
-}
-
-// GetIP returns the IP address of the Bytemark Cloud server
-func (d *Driver) GetIP() (string, error) {
-	//return ip, nil
-	return "", fmt.Errorf("not implemented yet")
-}
-
-// GetState returns a docker.hosts.state.State value representing the current state of the host.
-func (d *Driver) GetState() (state.State, error) {
-	return state.None, fmt.Errorf("not implemented yet")
-}
-
-// Start starts or creates an existing Bytemark Cloud server.
-func (d *Driver) Start() error {
-	return fmt.Errorf("not implemented yet")
-}
-
-// Stop stops an existing Bytemark Cloud server.
-func (d *Driver) Stop() error {
-	return fmt.Errorf("not implemented yet")
-}
-
-// Restart restarts a machine which is known to be running.
-func (d *Driver) Restart() error {
-	return fmt.Errorf("not implemented yet")
-}
-
-// Kill stops an existing Bytemark Cloud server.
-func (d *Driver) Kill() error {
-	return fmt.Errorf("not implemented yet")
-}
-
-// Remove deletes the Bytemark Cloud server and its disks.
-func (d *Driver) Remove() error {
-	return fmt.Errorf("not implemented yet")
+func (d *Driver) getVirtualMachine(useCache bool) (vm brain.VirtualMachine, err error) {
+	if useCache && d.vmCached != nil {
+		return *d.vmCached, nil
+	}
+	vmName := d.vmName()
+	client, err := d.getClient()
+	if err != nil {
+		return
+	}
+	vm, err = client.GetVirtualMachine(vmName)
+	d.vmCached = &vm
+	return
 }
