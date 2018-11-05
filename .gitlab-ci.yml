@@ -5,11 +5,13 @@ stages:
 image: golang:1.11-stretch
 
 before_script:
-  - go get -t ./...
+  - mkdir -p $GOPATH/src/github.com/BytemarkHosting/docker-machine-driver-bytemark
+  - cp -r * .* $GOPATH/src/github.com/BytemarkHosting/docker-machine-driver-bytemark
+  - go get -t github.com/BytemarkHosting/docker-machine-driver-bytemark/...
 
 test:
   script:
-    - go test ./...
+    - go test github.com/BytemarkHosting/docker-machine-driver-bytemark/...
 
 .build: &build
   stage: build
@@ -17,7 +19,7 @@ test:
     - apt update
     - apt install zip
   script:
-    - go build -o docker-machine-driver-bytemark
+    - go build github.com/BytemarkHosting/docker-machine-driver-bytemark -o docker-machine-driver-bytemark
     - zip docker-machine-driver-bytemark-$GOOS-$GOARCH.zip
   artifacts:
     paths:
