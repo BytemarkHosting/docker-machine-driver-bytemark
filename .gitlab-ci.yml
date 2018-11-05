@@ -6,7 +6,7 @@ image: golang:1.11-stretch
 
 before_script:
   - mkdir -p $GOPATH/src/github.com/BytemarkHosting/docker-machine-driver-bytemark
-  - cp -r * .* $GOPATH/src/github.com/BytemarkHosting/docker-machine-driver-bytemark
+  - cp -r * $GOPATH/src/github.com/BytemarkHosting/docker-machine-driver-bytemark
   - go get -t github.com/BytemarkHosting/docker-machine-driver-bytemark/...
 
 test:
