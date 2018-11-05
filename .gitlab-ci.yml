@@ -17,7 +17,7 @@ test:
   stage: build
   before_script:
     - apt update
-    - apt install zip
+    - apt install -y zip
   script:
     - go build github.com/BytemarkHosting/docker-machine-driver-bytemark -o docker-machine-driver-bytemark
     - zip docker-machine-driver-bytemark-$GOOS-$GOARCH.zip
