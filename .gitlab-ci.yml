@@ -1,6 +1,6 @@
 stages:
-- test
-- build
+  - test
+  - build
 
 before_script:
   - go get -t ./...
@@ -10,6 +10,7 @@ test:
     - go test ./...
 
 .build: &build
+  stage: build
   script:
     - go build -o docker-machine-driver-bytemark
     - zip docker-machine-driver-bytemark-$GOOS-$GOARCH.zip
