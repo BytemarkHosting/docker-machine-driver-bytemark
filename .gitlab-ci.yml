@@ -19,7 +19,7 @@ test:
     - apt update
     - apt install -y zip
     - go build github.com/BytemarkHosting/docker-machine-driver-bytemark
-    - zip docker-machine-driver-bytemark-$GOOS-$GOARCH.zip
+    - zip docker-machine-driver-bytemark-$GOOS-$GOARCH.zip docker-machine-driver-bytemark
   artifacts:
     paths:
       - ./docker-machine-driver-bytemark-$GOOS-$GOARCH.zip
