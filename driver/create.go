@@ -19,7 +19,7 @@ func (d *Driver) Create() error {
 	if err != nil {
 		return err
 	}
-	log.Infof("Generating SSH Key")
+	log.Info("Generating SSH Key")
 
 	if err = ssh.GenerateSSHKey(d.GetSSHKeyPath()); err != nil {
 		return err
@@ -30,7 +30,7 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	log.Infof("Creating host...")
+	log.Info("Creating host...")
 
 	d.Spec.Reimage.PublicKeys = string(sshKey)
 	vmn := d.vmName()

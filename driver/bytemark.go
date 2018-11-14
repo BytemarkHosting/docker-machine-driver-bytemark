@@ -47,7 +47,7 @@ func (d *Driver) getToken() (string, error) {
 		return d.token, nil
 	}
 
-	log.Debugf("Trying to read bytemark auth token from docker-machine store")
+	log.Debug("Trying to read bytemark auth token from docker-machine store")
 
 	tokenBytes, err := ioutil.ReadFile(d.ResolveStorePath("token"))
 
