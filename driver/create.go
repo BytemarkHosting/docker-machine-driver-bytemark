@@ -15,8 +15,8 @@ func (d *Driver) PreCreateCheck() error {
 	if err != nil {
 		return err
 	}
-	vmn = d.vmName()
-	group, err := client.getGroup(vmn.GroupName())
+	vmn := d.vmName()
+	group, err := client.GetGroup(vmn.GroupName())
 	if err != nil {
 		return err
 	}
