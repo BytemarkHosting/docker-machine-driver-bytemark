@@ -1,6 +1,7 @@
 package bytemark
 
 import (
+	"fmt"
 	"io/ioutil"
 
 	"github.com/docker/machine/libmachine/log"
@@ -9,6 +10,23 @@ import (
 
 // PreCreateCheck is called to enforce pre-creation steps
 func (d *Driver) PreCreateCheck() error {
+	log.Info("Ensuring that the groups exists")
+	client, err := d.getClient()
+	if err != nil {
+		return err
+	}
+	vmn = d.vmName()
+	group, err := client.getGroup(vmn.GroupName())
+	if err != nil {
+		return err
+	}
+
+	log.Info("Ensure the server does not already exist in the group")
+	for _, vm := range group.VirtualMachines {
+		if vm.Name == vmn.VirtualMachine {
+			return fmt.Errorf("Server %s already exists in the %q group", vm.Name, group.Name)
+		}
+	}
 	return nil
 }
 
