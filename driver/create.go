@@ -10,7 +10,7 @@ import (
 
 // PreCreateCheck is called to enforce pre-creation steps
 func (d *Driver) PreCreateCheck() error {
-	log.Info("Ensuring that the groups exists")
+	log.Info("Ensuring that the group exists")
 	client, err := d.getClient()
 	if err != nil {
 		return err
@@ -21,10 +21,10 @@ func (d *Driver) PreCreateCheck() error {
 		return err
 	}
 
-	log.Info("Ensure the server does not already exist in the group")
+	log.Info("Ensuring the server does not already exist in the group")
 	for _, vm := range group.VirtualMachines {
 		if vm.Name == vmn.VirtualMachine {
-			return fmt.Errorf("Server %s already exists in the %q group", vm.Name, group.Name)
+			return fmt.Errorf("Server %s already exists in the %s group", vm.Name, group.Name)
 		}
 	}
 	return nil
