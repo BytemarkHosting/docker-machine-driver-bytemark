@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/BytemarkHosting/docker-machine-driver-bytemark.svg?branch=master)](https://travis-ci.org/BytemarkHosting/docker-machine-driver-bytemark)
+
 # docker-machine-driver-bytemark
 
 One-command provisioning for bytemark docker-machines!

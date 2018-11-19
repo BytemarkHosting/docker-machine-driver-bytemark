@@ -10,4 +10,14 @@ install:
     
 # check that bytemark-disc flag is listed in help (i.e. driver loads fine)
 script:
+  - cp $GOPATH/bin/docker-machine-driver-bytemark .
   - docker-machine create -d bytemark -h | grep bytemark-cores
+
+deploy:
+  provider: releases
+  api_key:
+    secure:
+  file: "docker-machine-driver-bytemark"
+  skip_cleanup: true
+  on:
+    tags: true
