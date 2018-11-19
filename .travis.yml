@@ -1,0 +1,13 @@
+language: go
+
+sudo: false
+
+go:
+  - 1.10
+
+install:
+  - go install
+    
+# check that bytemark-disc flag is listed in help (i.e. driver loads fine)
+script:
+  - docker-machine create -d bytemark -h | grep bytemark-cores
