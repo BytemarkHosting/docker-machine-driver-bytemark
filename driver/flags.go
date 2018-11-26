@@ -53,17 +53,17 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 }
 
 func (d *Driver) setServerSpecFromFlags(flags drivers.DriverOptions) {
-	d.Spec.VirtualMachine.Cores = flags.Int("bytemark-cores")
-	d.Spec.VirtualMachine.Memory = flags.Int("bytemark-memory")
-	d.Spec.VirtualMachine.ZoneName = flags.String("bytemark-zone")
-	d.Spec.Discs = brain.Discs{brain.Disc{
+	d.spec.VirtualMachine.Cores = flags.Int("bytemark-cores")
+	d.spec.VirtualMachine.Memory = flags.Int("bytemark-memory")
+	d.spec.VirtualMachine.ZoneName = flags.String("bytemark-zone")
+	d.spec.Discs = brain.Discs{brain.Disc{
 		Size:         flags.Int("bytemark-disk-size") * 1024,
 		StorageGrade: flags.String("bytemark-disk-grade"),
 	}}
-	d.Spec.Reimage.Distribution = flags.String("bytemark-image")
+	d.spec.Reimage.Distribution = flags.String("bytemark-image")
 
 	// kind of unrelated, but now is as good a time as any
-	d.Spec.VirtualMachine.Name = d.vmName().VirtualMachine
+	d.spec.VirtualMachine.Name = d.vmName().VirtualMachine
 }
 
 // SetConfigFromFlags initializes the driver based on the command line flags.
