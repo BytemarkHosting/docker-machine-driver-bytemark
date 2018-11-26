@@ -16,7 +16,7 @@ type Driver struct {
 
 	Spec brain.VirtualMachineSpec
 
-	token string
+	Token string
 
 	client       lib.Client
 	vmCached     *brain.VirtualMachine

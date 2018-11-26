@@ -69,7 +69,7 @@ func (d *Driver) setServerSpecFromFlags(flags drivers.DriverOptions) {
 // SetConfigFromFlags initializes the driver based on the command line flags.
 func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) (err error) {
 	d.setServerSpecFromFlags(flags)
-	d.token = flags.String("bytemark-token")
+	d.Token = flags.String("bytemark-token")
 
 	return nil
 }

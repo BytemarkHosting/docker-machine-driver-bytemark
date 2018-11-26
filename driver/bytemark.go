@@ -39,8 +39,8 @@ func (d *Driver) vmName() lib.VirtualMachineName {
 }
 
 func (d *Driver) getToken() (string, error) {
-	if d.token != "" {
-		return d.token, nil
+	if d.Token != "" {
+		return d.Token, nil
 	}
 
 	log.Debug("Trying to read bytemark auth token from docker-machine store")
@@ -48,16 +48,16 @@ func (d *Driver) getToken() (string, error) {
 	tokenBytes, err := ioutil.ReadFile(d.ResolveStorePath("token"))
 
 	if err == nil {
-		d.token = string(tokenBytes)
-		return d.token, nil
+		d.Token = string(tokenBytes)
+		return d.Token, nil
 	}
 	path := filepath.Join(os.Getenv("HOME"), ".bytemark", "token")
 	log.Debugf("Trying to read bytemark auth token from %s", path)
 	tokenBytes, err = ioutil.ReadFile(path)
 
 	if err == nil {
-		d.token = string(tokenBytes)
-		return d.token, nil
+		d.Token = string(tokenBytes)
+		return d.Token, nil
 	}
 
 	err = fmt.Errorf("Couldn't find a bytemark auth token. Please set BYTEMARK_AUTH_TOKEN")
