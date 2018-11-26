@@ -16,7 +16,12 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Value:  defaultZone,
 			EnvVar: "BYTEMARK_ZONE",
 		},
-
+		mcnflag.StringFlag{
+			Name:   "bytemark-token",
+			Usage:  "Token for authentication",
+			Value:  "",
+			EnvVar: "BYTEMARK_TOKEN",
+		},
 		mcnflag.IntFlag{
 			Name:   "bytemark-memory",
 			Usage:  "Memory in MiB",
@@ -39,6 +44,11 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Usage: "Disk storage grade (sata / archive)",
 			Value: defaultDiskGrade,
 		},
+		mcnflag.StringFlag{
+			Name:  "bytemark-image",
+			Usage: "Base image to use",
+			Value: "stretch",
+		},
 	}
 }
 
@@ -50,6 +60,7 @@ func (d *Driver) setServerSpecFromFlags(flags drivers.DriverOptions) {
 		Size:         flags.Int("bytemark-disk-size") * 1024,
 		StorageGrade: flags.String("bytemark-disk-grade"),
 	}}
+	d.Spec.Reimage.Distribution = flags.String("bytemark-image")
 
 	// kind of unrelated, but now is as good a time as any
 	d.Spec.VirtualMachine.Name = d.vmName().VirtualMachine
@@ -58,6 +69,7 @@ func (d *Driver) setServerSpecFromFlags(flags drivers.DriverOptions) {
 // SetConfigFromFlags initializes the driver based on the command line flags.
 func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) (err error) {
 	d.setServerSpecFromFlags(flags)
+	d.token = flags.String("bytemark-token")
 
 	return nil
 }

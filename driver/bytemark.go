@@ -42,10 +42,6 @@ func (d *Driver) getToken() (string, error) {
 	if d.token != "" {
 		return d.token, nil
 	}
-	d.token = os.Getenv("BYTEMARK_AUTH_TOKEN")
-	if d.token != "" {
-		return d.token, nil
-	}
 
 	log.Debug("Trying to read bytemark auth token from docker-machine store")
 
