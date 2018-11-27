@@ -3,6 +3,7 @@ package bytemark
 import (
 	"fmt"
 	"io/ioutil"
+	"strings"
 
 	"github.com/docker/machine/libmachine/log"
 	"github.com/docker/machine/libmachine/ssh"
@@ -50,10 +51,19 @@ func (d *Driver) Create() error {
 
 	log.Info("Creating host...")
 
-	d.Spec.Reimage.PublicKeys = string(sshKey)
+	d.spec.Reimage.PublicKeys = string(sshKey)
 	vmn := d.vmName()
 
-	_, err = client.CreateVirtualMachine(vmn.GroupName(), d.Spec)
+	_, err = client.CreateVirtualMachine(vmn.GroupName(), d.spec)
+
+	// remove all the info that shouldn't be stored (VM spec,
+	d.redact()
 
 	return err
+}
+
+func (d *Driver) redact() {
+	if !strings.HasPrefix(d.Token, "apikey.") {
+		d.Token = ""
+	}
 }
