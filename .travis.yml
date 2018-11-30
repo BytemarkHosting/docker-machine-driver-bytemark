@@ -32,6 +32,7 @@ deploy:
   - docker-machine-driver-bytemark.linux.tar.gz
   - docker-machine-driver-bytemark.mac.tar.gz
   - docker-machine-driver-bytemark.windows.zip
+  skip_cleanup: true
   on:
     repo: BytemarkHosting/docker-machine-driver-bytemark
     tags: true
