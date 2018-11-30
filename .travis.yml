@@ -9,7 +9,7 @@ install:
 # install docker-machine so we can check our driver gets loaded OK
 - go get github.com/docker/machine/cmd/docker-machine
 # installs docker-machine-driver-bytemark into $GOPATH/bin to allow it to get loaded
-- go get -t .
+- go get -t ./...
 
 script:
 # check the driver gets loaded
