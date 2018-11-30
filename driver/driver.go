@@ -11,12 +11,14 @@ import (
 )
 
 // Driver is a struct compatible with the docker.hosts.drivers.Driver interface.
+// The Driver is used as a data store too, any Exported fields will be saved in
+// the machine's config json.
 type Driver struct {
 	*drivers.BaseDriver
 
-	Spec brain.VirtualMachineSpec
+	spec brain.VirtualMachineSpec
 
-	token string
+	Token string
 
 	client       lib.Client
 	vmCached     *brain.VirtualMachine
@@ -34,7 +36,7 @@ func NewDriver(machineName string, storePath string) *Driver {
 	}
 
 	return &Driver{
-		Spec: brain.VirtualMachineSpec{
+		spec: brain.VirtualMachineSpec{
 			VirtualMachine: brain.VirtualMachine{
 				Cores: defaultCores,
 				Discs: defaultDiscs,

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/BytemarkHosting/docker-machine-driver-bytemark.svg?branch=master)](https://travis-ci.org/BytemarkHosting/docker-machine-driver-bytemark)
+
 # docker-machine-driver-bytemark
 
 One-command provisioning for bytemark docker-machines!
@@ -57,7 +59,9 @@ $ docker-machine create -d bytemark
    --bytemark-cores "1"         Number of CPU cores [$BYTEMARK_CORES]
    --bytemark-disk-grade "sata" Disk storage grade (sata / archive)
    --bytemark-disk-size "25"    Disk size in GiB
+   --bytemark-image "stretch"   Base image to use
    --bytemark-memory "1024"     Memory in MiB [$BYTEMARK_MEMORY]
+   --bytemark-token             Token for authentication
    --bytemark-zone "york"       Zone [$BYTEMARK_ZONE]
 ```
 Right now `docker-machine-driver-bytemark` requires that the
@@ -87,21 +91,21 @@ $ docker-machine create -d bytemark --engine-storage-driver overlay2 master.swar
 ## Authentication
 
 Authentication is done using a token obtained from Bytemark's auth server as
-described in [our API documentation][authapi].
+described in [our API documentation][authapi], or using an API key (coming soon!
+- but already supported by docker-machine-driver-bytemark)
 
-To provide the token to docker-machine you must either set the
-`BYTEMARK_AUTH_TOKEN` environment variable, or store the token in
+To provide the token/key to docker-machine you must either set the
+`--bytemark-token` flag, the `$BYTEMARK_TOKEN` env var, or store the token in
 `~/.bytemark/token`. This is also the location that
 [bytemark-client][bytemark-client] uses to store the token, so you can, for
 example, set up a swarm cluster without having to go get a token by yourself.
 
-```console
-$ bytemark create group swarm
-$ docker-machine create -d bytemark --engine-storage-driver overlay2 manager
-$ docker-machine create -d bytemark --engine-storage-driver overlay2 worker
-$ docker-machine ssh manager "docker swarm init"
-$ docker-machine ssh worker "docker swarm join --token [worker-token]"
-```
+If the token used is an API key, it will be stored in the machine's config.json
+(usually `~/.docker/machine/machines/MACHINE_NAME/config.json`) to allow for
+long term usage of docker-machine. If not, token is not stored (it would expire
+quickly anyway). You will not be prompted to log in if your token has expired,
+you'll just see 401 errors - provide the token in `~/.bytemark/token` to
+alleviate that.
 
 [authapi](https://docs.bytemark.co.uk/article/about-the-cloud-server-api/#authentication)
 [bytemark-client](https://github.com/BytemarkHosting/bytemark-client)
