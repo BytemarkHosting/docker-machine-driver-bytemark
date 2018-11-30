@@ -22,7 +22,7 @@ script:
 - GOOS=darwin GOARCH=amd64 go build
 - tar -czf docker-machine-driver-bytemark.mac.tar.gz docker-machine-driver-bytemark
 - GOOS=windows GOARCH=amd64 go build
-- zip docker-machine-driver-bytemark.windows.zip docker-machine-driver-bytemark.zip
+- zip docker-machine-driver-bytemark.windows.zip docker-machine-driver-bytemark.exe
 
 deploy:
   provider: releases
