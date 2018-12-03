@@ -9,7 +9,7 @@ install:
 # install docker-machine so we can check our driver gets loaded OK
 - go get github.com/docker/machine/cmd/docker-machine
 # installs docker-machine-driver-bytemark into $GOPATH/bin to allow it to get loaded
-- go get -t .
+- go get -t ./...
 
 script:
 # check the driver gets loaded
@@ -17,18 +17,22 @@ script:
 # run the driver's tests
 - go test ./...
 # now build for windows, mac and linux
-- GOOS=linux GOARCH=amd64 go build .
+- GOOS=linux GOARCH=amd64 go build
 - tar -czf docker-machine-driver-bytemark.linux.tar.gz docker-machine-driver-bytemark
 - GOOS=darwin GOARCH=amd64 go build
 - tar -czf docker-machine-driver-bytemark.mac.tar.gz docker-machine-driver-bytemark
 - GOOS=windows GOARCH=amd64 go build
-- tar -czf docker-machine-driver-bytemark.windows.tar.gz docker-machine-driver-bytemark
+- zip docker-machine-driver-bytemark.windows.zip docker-machine-driver-bytemark.exe
 
 deploy:
   provider: releases
   api_key:
     secure: aZrWhz99BLHBAiH/BA/IZmdPM/0qRg3Cu14O+SqZ54z57HdbNw3NefHkP3+nUpEgwA3raq3w4VIQfXqS2JMmdWvjGxLA3BBKcZAIOJKQpj0exYEYi8x3IPVQrT3oHL3s2B+k0gpsUq037l/KjMnwBB8lRM//TqXEXeBZqz8GINyd+GMkcU1UGaMjbV4xMeWboO2aNFWmPDLQ9UtHkRrTHz2LfgiTaUIthzKF4MrwwbK8pXSvPHAU7OYTe7siboD/K9UEW2p4IZv0UXoYbX40Xd3MA9Ph1rW0Mvp9JNJV4geQ0ZPtd2BP7vcmM3SXE1ea9CWVisDoVdeDpueimfv2x64CvqV3J4tfupp5k7nrDkcgaEh5NMuFe5ti9WTL16hAhZlcVe9MVgF8UtImGj1Roj+Oo//CZJGmezgMS0I+y4ZoWwcYpLoGXsARiAUbImTOnoXdOV1geEU8GEfQ1F7OqaklclIevyvj96ucD6CSdhGdPBhuEDg9ho5qTInqcEQVH2TkIuoloq8PQqDBTy6tkGZdH8BP4ObySOMxpHp0rsrdQbHS+QZ3VioSVO9Ce+LfsHqYyX5GTY2MTMNq3PACKmrB2nkIdMaU0uLB/z0Igm2UV13XL+dhAlHgXZwKvJY9gL2+kQX8n0Aeu4kiKF7ooSvaj5xyiB9JOHHjxLSYH1c=
-  file: docker-machine-driver-bytemark-*.tar.gz
+  file:
+  - docker-machine-driver-bytemark.linux.tar.gz
+  - docker-machine-driver-bytemark.mac.tar.gz
+  - docker-machine-driver-bytemark.windows.zip
+  skip_cleanup: true
   on:
     repo: BytemarkHosting/docker-machine-driver-bytemark
     tags: true
