@@ -11,6 +11,12 @@ import (
 func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 	return []mcnflag.Flag{
 		mcnflag.StringFlag{
+			Name:   "bytemark-cluster",
+			Usage:  "HTTP(S) root URL of cluster endpoint",
+			Value:  "https://uk0.bigv.io",
+			EnvVar: "BYTEMARK_CLUSTER_URL",
+		},
+		mcnflag.StringFlag{
 			Name:   "bytemark-zone",
 			Usage:  "Zone",
 			Value:  defaultZone,
@@ -68,6 +74,7 @@ func (d *Driver) setServerSpecFromFlags(flags drivers.DriverOptions) {
 
 // SetConfigFromFlags initializes the driver based on the command line flags.
 func (d *Driver) SetConfigFromFlags(flags drivers.DriverOptions) (err error) {
+	d.ClusterURL = flags.String("bytemark-cluster")
 	d.setServerSpecFromFlags(flags)
 	d.Token = flags.String("bytemark-token")
 
