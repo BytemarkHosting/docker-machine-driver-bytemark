@@ -6,6 +6,7 @@ import (
 
 	"github.com/BytemarkHosting/bytemark-client/lib"
 	"github.com/BytemarkHosting/bytemark-client/lib/brain"
+	bmlog "github.com/BytemarkHosting/bytemark-client/util/log"
 	"github.com/docker/machine/libmachine/drivers"
 	"github.com/docker/machine/libmachine/state"
 )
@@ -28,6 +29,7 @@ type Driver struct {
 
 // NewDriver creates a Driver with the specified storePath.
 func NewDriver(machineName string, storePath string) *Driver {
+	bmlog.DebugLevel = 5
 	defaultDiscs := brain.Discs{
 		brain.Disc{
 			Label:        "disk-1",

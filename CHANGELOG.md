@@ -1,3 +1,8 @@
+## [0.2]
+### Added
+* Added `bytemark-cluster` flag to set the API endpoint to use.
+* Supplying the `debug` flag now causes bytemark-client's debug output to be output too.
+
 ## [0.1]
 ### Added
 
