@@ -72,7 +72,13 @@ func (d *Driver) getClient() (lib.Client, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Could not find a token: %s. Please set BYTEMARK_AUTH_TOKEN environment variable", err)
 	}
-	client, err := lib.New()
+	if d.ClusterURL == "" {
+		d.ClusterURL = lib.DefaultURLs().Brain
+	}
+	urls := lib.EndpointURLs{
+		Brain: d.ClusterURL,
+	}
+	client, err := lib.NewWithURLs(urls)
 	if err != nil {
 		return nil, fmt.Errorf("Could not create client: %s", err)
 	}
